@@ -66,7 +66,7 @@ switch (command)
 
                 using (var originalFileStream = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    using var compressedFileStream = File.Create(compressedFileName);
+                    using var compressedFileStream = File.Create($".git/objects/{firstTwoHash}/{compressedFileName}");
                     using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
                     originalFileStream.CopyTo(compressor);
                 }
