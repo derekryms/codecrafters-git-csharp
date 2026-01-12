@@ -1,4 +1,6 @@
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 
 if (args.Length < 1)
 {
@@ -25,11 +27,13 @@ switch (command)
         var option = args[1];
         var content = args[2];
 
-        var filePathAndName = option switch
+        var filePathAndName = string.Empty;
+        switch (option)
         {
-            "-p" => Path.Combine(".git", "objects", content[..2], content[2..]),
-            _ => string.Empty
-        };
+            case "-p":
+                filePathAndName = Path.Combine(".git", "objects", content[..2], content[2..]);
+                break;
+        }
 
         const string decompressedFileName = "test";
         using (var compressedFileStream = File.Open(filePathAndName, FileMode.Open, FileAccess.Read))
@@ -41,6 +45,33 @@ switch (command)
 
         var contents = File.ReadAllText(decompressedFileName).Split('\0')[1];
         Console.Write(contents);
+        break;
+    }
+    case "hash-object":
+    {
+        var option = args[1];
+        var fileName = args[2];
+        var contents = File.ReadAllText(fileName);
+        var blobText = $"blob\x20{contents.Length}\0{contents}";
+        var sha1 = SHA1.HashData(Encoding.UTF8.GetBytes(blobText));
+        var hash = Convert.ToHexStringLower(sha1);
+        Console.Write(hash);
+
+        switch (option)
+        {
+            case "-w":
+                var firstTwoHash = hash[..2];
+                var compressedFileName = hash[2..];
+                Directory.CreateDirectory($".git/objects/{firstTwoHash}");
+
+                using (var originalFileStream = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    using var compressedFileStream = File.Create(compressedFileName);
+                    using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
+                    originalFileStream.CopyTo(compressor);
+                }
+                break;
+        }
         break;
     }
     default:
