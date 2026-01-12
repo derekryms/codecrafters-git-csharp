@@ -53,7 +53,8 @@ switch (command)
         var fileName = args[2];
         var contents = File.ReadAllText(fileName);
         var blobText = $"blob\x20{contents.Length}\0{contents}";
-        var sha1 = SHA1.HashData(Encoding.UTF8.GetBytes(blobText));
+        var bytes = Encoding.UTF8.GetBytes(blobText);
+        var sha1 = SHA1.HashData(bytes);
         var hash = Convert.ToHexStringLower(sha1);
         Console.Write(hash);
 
@@ -64,11 +65,10 @@ switch (command)
                 var compressedFileName = hash[2..];
                 Directory.CreateDirectory($".git/objects/{firstTwoHash}");
 
-                using (var originalFileStream = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                using (var compressedFileStream = File.Create($".git/objects/{firstTwoHash}/{compressedFileName}"))
                 {
-                    using var compressedFileStream = File.Create($".git/objects/{firstTwoHash}/{compressedFileName}");
                     using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
-                    originalFileStream.CopyTo(compressor);
+                    compressor.Write(bytes);
                 }
                 break;
         }
