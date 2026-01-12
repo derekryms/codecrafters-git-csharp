@@ -12,6 +12,7 @@ if (args.Length < 1)
 Console.Error.WriteLine("Logs from your program will appear here!");
 
 var command = args[0];
+var option = args.ElementAtOrDefault(1);
 
 switch (command)
 {
@@ -24,51 +25,52 @@ switch (command)
         break;
     case "cat-file":
     {
-        var option = args[1];
-        var content = args[2];
+        var hash = args.ElementAtOrDefault(2);
 
-        var filePathAndName = string.Empty;
         switch (option)
         {
             case "-p":
-                filePathAndName = Path.Combine(".git", "objects", content[..2], content[2..]);
+                if (hash is null)
+                    throw new ArgumentException($"No hash after {option} specified");
+                
+                var decompressedFileStream = new MemoryStream();
+                using (var compressedFileStream = File.Open($".git/objects/{hash[..2]}/{hash[2..]}", FileMode.Open, FileAccess.Read))
+                {
+                    using var decompressor = new ZLibStream(compressedFileStream, CompressionMode.Decompress);
+                    decompressor.CopyTo(decompressedFileStream);
+                }
+
+                var fullFileContents = Encoding.UTF8.GetString(decompressedFileStream.ToArray());
+                var userFileContents = fullFileContents.Split('\0')[1];
+                Console.Write(userFileContents);
                 break;
         }
-
-        const string decompressedFileName = "test";
-        using (var compressedFileStream = File.Open(filePathAndName, FileMode.Open, FileAccess.Read))
-        {
-            using var outputFileStream = File.Create(decompressedFileName);
-            using var decompressor = new ZLibStream(compressedFileStream, CompressionMode.Decompress);
-            decompressor.CopyTo(outputFileStream);
-        }
-
-        var contents = File.ReadAllText(decompressedFileName).Split('\0')[1];
-        Console.Write(contents);
         break;
     }
     case "hash-object":
     {
-        var option = args[1];
-        var fileName = args[2];
-        var contents = File.ReadAllText(fileName);
-        var blobText = $"blob\x20{contents.Length}\0{contents}";
-        var bytes = Encoding.UTF8.GetBytes(blobText);
-        var sha1 = SHA1.HashData(bytes);
-        var hash = Convert.ToHexStringLower(sha1);
-        Console.Write(hash);
+        var fileName = args.ElementAtOrDefault(2);
+        if (fileName is null)
+            throw new ArgumentException("No file name provided");
+        
+        var userFileContents = File.ReadAllText(fileName);
+        var blobText = $"blob\x20{userFileContents.Length}\0{userFileContents}";
+        var fullFileBytes = Encoding.UTF8.GetBytes(blobText);
+        var sha1Hash = SHA1.HashData(fullFileBytes);
+        var sha1HashHex = Convert.ToHexStringLower(sha1Hash);
+        Console.Write(sha1HashHex);
 
         switch (option)
         {
             case "-w":
-                var firstTwoHash = hash[..2];
-                var compressedFileName = hash[2..];
-                Directory.CreateDirectory($".git/objects/{firstTwoHash}");
+                var fileDirectory = sha1HashHex[..2];
+                var compressedFileName = sha1HashHex[2..];
+                Directory.CreateDirectory($".git/objects/{fileDirectory}");
 
-                using (var compressedFileStream = File.Create($".git/objects/{firstTwoHash}/{compressedFileName}"))
+                using (var compressedFileStream = File.Create($".git/objects/{fileDirectory}/{compressedFileName}"))
                 {
                     using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
-                    compressor.Write(bytes);
+                    compressor.Write(fullFileBytes);
                 }
                 break;
         }
