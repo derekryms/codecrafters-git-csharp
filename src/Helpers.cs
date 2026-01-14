@@ -1,9 +1,15 @@
 using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace codecrafters_git;
 
 public static class Helpers
 {
+    public static string GetSha1Hash(byte[] bytes)
+    {
+        return Convert.ToHexStringLower(SHA1.HashData(bytes));
+    }
+    
     public static byte[] GetDecompressedBytes(string hash)
     {
         var decompressed = new MemoryStream();
@@ -12,5 +18,35 @@ public static class Helpers
         decompressor.CopyTo(decompressed);
 
         return decompressed.ToArray();
+    }
+
+    public static GitTree GetTreeRecursive(string workingDir)
+    {
+        var treeEntries = new List<GitTreeEntry>();
+        var files = Directory.GetFiles(workingDir);
+        var dirs = Directory.GetDirectories(workingDir);
+        foreach (var file in files)
+        {
+            var blob = new GitBlob(File.ReadAllText(file));
+            var unixFileMode = File.GetUnixFileMode(file);
+            var hasExecute = unixFileMode.HasFlag(UnixFileMode.OtherExecute) ||
+                          unixFileMode.HasFlag(UnixFileMode.GroupExecute) ||
+                          unixFileMode.HasFlag(UnixFileMode.UserExecute);
+            var mode = hasExecute ? "100755" : "100644";
+            treeEntries.Add(new GitTreeEntry(GetSha1Hash(blob.UncompressedDataBytes), mode, "blob", Path.GetFileName(file)));
+        }
+
+        foreach (var dir in dirs)
+        {
+            var name = Path.GetFileName(dir);
+            if (name == ".git")
+                continue;
+            
+            var childTree = GetTreeRecursive(dir);
+            treeEntries.Add(new GitTreeEntry(GetSha1Hash(childTree.UncompressedDataBytes), "40000", "tree", name));
+        }
+
+        var tree = new GitTree(treeEntries.OrderBy(t => t.Name).ToList());
+        return tree;
     }
 }

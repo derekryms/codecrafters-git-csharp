@@ -1,7 +1,5 @@
 using System.IO.Compression;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using codecrafters_git;
 
 if (args.Length < 1)
@@ -28,7 +26,7 @@ else if (command == "cat-file" && args[1] == "-p")
 else if (command == "hash-object" && args[1] == "-w")
 {
     var blob = new GitBlob(File.ReadAllText(args[2]));
-    var hash = blob.GetSha1Hash();
+    var hash = Helpers.GetSha1Hash(blob.UncompressedDataBytes);
     Console.WriteLine(hash);
 
     var fileDirectory = hash[..2];
@@ -75,7 +73,7 @@ else if (command == "ls-tree"  && args[1] == "--name-only")
                 var hashStart = i + 1;
                 var hashEnd = hashStart + 20;
                 var hashBytes = contentsWithoutHeader[hashStart..hashEnd];
-                var hash = Convert.ToHexStringLower(SHA1.HashData(hashBytes));
+                var hash = Convert.ToHexStringLower(hashBytes);
                 
                 treeEntries.Add(new GitTreeEntry(hash, mode, type, name));
                 break;
@@ -83,12 +81,25 @@ else if (command == "ls-tree"  && args[1] == "--name-only")
         }
     }
     
-    var tree = new GitTree(treeEntries);
-
-    foreach (var treeEntry in tree.TreeEntries)
+    foreach (var treeEntry in treeEntries)
     {
         Console.WriteLine(treeEntry.Name);
     }
+}
+else if (command == "write-tree")
+{
+    var workingDir = Path.Combine(Directory.GetCurrentDirectory()/*, "testArea"*/);
+    var tree = Helpers.GetTreeRecursive(workingDir);
+    var hash = Helpers.GetSha1Hash(tree.UncompressedDataBytes);
+    Console.Write(hash);
+    
+    var fileDirectory = hash[..2];
+    var compressedFileName = hash[2..];
+    Directory.CreateDirectory($".git/objects/{fileDirectory}");
+
+    using var compressedFileStream = File.Create($".git/objects/{fileDirectory}/{compressedFileName}");
+    using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
+    compressor.Write(tree.UncompressedDataBytes);
 }
 else
 {
