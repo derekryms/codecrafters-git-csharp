@@ -41,3 +41,22 @@ public class GitTree
 }
 
 public record GitTreeEntry(string Sha1Hash, string Mode, string Type, string Name);
+
+public class GitCommit
+{
+    public GitCommit(string treeSha, string parentCommitSha, string commitMessage)
+    {
+        var parentCommit = $"parent\x20{parentCommitSha}\n";
+        var time = DateTime.UtcNow - DateTime.UnixEpoch;
+        var offset = Helpers.TimeSpanToTimezoneOffset(TimeZoneInfo.Utc.BaseUtcOffset);
+        var author = "author\x20" + "Code\x20" + "Crafters\x20" + $"<user@cc.com>\x20{time.TotalSeconds:F0}\x20{offset}\n";
+        var commiter = "commiter\x20" + "Code\x20" + "Crafters\x20" + $"<user@cc.com>\x20{time.TotalSeconds:F0}\x20{offset}\n\n";
+        var sb = new StringBuilder();
+        sb.Append(parentCommit).Append(author).Append(commiter).AppendLine(commitMessage);
+        var header = $"commit\x20{sb.Length}\0tree\x20{treeSha}\n";
+        sb.Insert(0, header);
+        UncompressedDataBytes = Encoding.UTF8.GetBytes(sb.ToString());
+    }
+    
+    public byte[] UncompressedDataBytes { get; }
+}

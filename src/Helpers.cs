@@ -49,4 +49,12 @@ public static class Helpers
         var tree = new GitTree(treeEntries.OrderBy(t => t.Name).ToList());
         return tree;
     }
+    
+    public static string TimeSpanToTimezoneOffset(TimeSpan offset)
+    {
+        var sign = offset.Ticks >= 0 ? '+' : '-';
+        var hours = Math.Abs(offset.Hours);
+        var minutes = Math.Abs(offset.Minutes);
+        return $"{sign}{hours:D2}{minutes:D2}";
+    }
 }

@@ -101,6 +101,20 @@ else if (command == "write-tree")
     using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
     compressor.Write(tree.UncompressedDataBytes);
 }
+else if (command == "commit-tree" && args[2] == "-p" && args[4] == "-m")
+{
+    var commit = new GitCommit(args[1], args[3], args[5]);
+    var hash = Helpers.GetSha1Hash(commit.UncompressedDataBytes);
+    Console.Write(hash);
+    
+    var fileDirectory = hash[..2];
+    var compressedFileName = hash[2..];
+    Directory.CreateDirectory($".git/objects/{fileDirectory}");
+
+    using var compressedFileStream = File.Create($".git/objects/{fileDirectory}/{compressedFileName}");
+    using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
+    compressor.Write(commit.UncompressedDataBytes);
+}
 else
 {
     throw new ArgumentException($"Unknown command {command}");
