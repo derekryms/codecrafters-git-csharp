@@ -115,6 +115,12 @@ else if (command == "commit-tree" && args[2] == "-p" && args[4] == "-m")
     using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
     compressor.Write(commit.UncompressedDataBytes);
 }
+else if (command == "clone")
+{
+    var repoUrl = args[1];
+    Directory.CreateDirectory(args[2]);
+    Console.Error.WriteLine($"Cloning {repoUrl} into {args[2]}");
+}
 else
 {
     throw new ArgumentException($"Unknown command {command}");
