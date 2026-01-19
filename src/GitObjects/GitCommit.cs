@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace codecrafters_git;
+namespace codecrafters_git.GitObjects;
 
 public class GitCommit
 {

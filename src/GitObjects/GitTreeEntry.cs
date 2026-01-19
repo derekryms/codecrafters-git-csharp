@@ -1,3 +1,3 @@
-namespace codecrafters_git;
+namespace codecrafters_git.GitObjects;
 
 public record GitTreeEntry(string Sha1Hash, string Mode, string Type, string Name);
