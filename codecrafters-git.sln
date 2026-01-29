@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codecrafters-git", "codecrafters-git\codecrafters-git.csproj", "{12E94A3C-968D-44C3-B754-4D4B5D8A1E29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codecrafters-git-tests", "codecrafters-git-tests\codecrafters-git-tests.csproj", "{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{12E94A3C-968D-44C3-B754-4D4B5D8A1E29}.Release|x64.Build.0 = Release|Any CPU
 		{12E94A3C-968D-44C3-B754-4D4B5D8A1E29}.Release|x86.ActiveCfg = Release|Any CPU
 		{12E94A3C-968D-44C3-B754-4D4B5D8A1E29}.Release|x86.Build.0 = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|x64.Build.0 = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|x64.ActiveCfg = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|x64.Build.0 = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC512B5D-FB80-41B4-BEDD-2153C50E67F5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
