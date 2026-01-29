@@ -1,13 +1,15 @@
 namespace codecrafters_git.Commands;
 
-public class Init : ICommand
+public class Init(string rootDirectory) : ICommand
 {
-    public void Run(string[] args)
+    public Task Run(string[] args)
     {
-        Directory.CreateDirectory(".git");
-        Directory.CreateDirectory(".git/objects");
-        Directory.CreateDirectory(".git/refs");
-        File.WriteAllText(".git/HEAD", "ref: refs/heads/main\n");
+        Directory.CreateDirectory($"{rootDirectory}.git");
+        Directory.CreateDirectory($"{rootDirectory}.git/objects");
+        Directory.CreateDirectory($"{rootDirectory}.git/refs");
+        File.WriteAllText($"{rootDirectory}.git/HEAD", "ref: refs/heads/main\n");
         Console.WriteLine("Initialized git directory");
+        
+        return Task.CompletedTask;
     }
 }

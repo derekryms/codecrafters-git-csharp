@@ -2,9 +2,9 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
-public class HashObject : ICommand
+public class HashObject(string rootDirectory) : ICommand
 {
-    public void Run(string[] args)
+    public Task Run(string[] args)
     {
         var option = args[0];
         var fileName = args[1];
@@ -12,8 +12,10 @@ public class HashObject : ICommand
         if (option == "-w")
         {
             var blob = new GitBlob(File.ReadAllText(fileName));
-            var hash = Helpers.Compress(blob.UncompressedDataBytes);
+            var hash = Helpers.Compress(rootDirectory, blob.UncompressedDataBytes);
             Console.Write(hash);
         }
+        
+        return Task.CompletedTask;
     }
 }

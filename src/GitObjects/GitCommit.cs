@@ -18,5 +18,12 @@ public class GitCommit
         UncompressedDataBytes = Encoding.UTF8.GetBytes(sb.ToString());
     }
 
+    public GitCommit(byte[] content)
+    {
+        var header = $"commit {content.Length}\0";
+        var headerBytes = Encoding.UTF8.GetBytes(header);
+        UncompressedDataBytes = [..headerBytes, ..content];
+    }
+
     public byte[] UncompressedDataBytes { get; }
 }

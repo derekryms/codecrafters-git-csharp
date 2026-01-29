@@ -11,6 +11,13 @@ public class GitBlob
         var headerBytes = Encoding.UTF8.GetBytes(header);
         UncompressedDataBytes = [..headerBytes, ..contentBytes];
     }
+    
+    public GitBlob(byte[] content)
+    {
+        var header = $"blob {content.Length}\0";
+        var headerBytes = Encoding.UTF8.GetBytes(header);
+        UncompressedDataBytes = [..headerBytes, ..content];
+    }
 
     public byte[] UncompressedDataBytes { get; }
 

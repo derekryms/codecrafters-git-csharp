@@ -1,12 +1,14 @@
 namespace codecrafters_git.Commands;
 
-public class WriteTree : ICommand
+public class WriteTree(string rootDirectory) : ICommand
 {
-    public void Run(string[] args)
+    public Task Run(string[] args)
     {
         var workingDir = Path.Combine(Directory.GetCurrentDirectory());
         var tree = Helpers.GetTreeRecursive(workingDir);
-        var hash = Helpers.Compress(tree.UncompressedDataBytes);
+        var hash = Helpers.Compress(rootDirectory, tree.UncompressedDataBytes);
         Console.Write(hash);
+        
+        return Task.CompletedTask;
     }
 }

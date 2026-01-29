@@ -3,16 +3,16 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
-public class LsTree : ICommand
+public class LsTree(string rootDirectory) : ICommand
 {
-    public void Run(string[] args)
+    public Task Run(string[] args)
     {
         var option = args[0];
         var blobHash = args[1];
 
         if (option == "--name-only")
         {
-            var fullFileContentBytes = Helpers.GetDecompressedBytes(blobHash);
+            var fullFileContentBytes = Helpers.GetDecompressedBytes(rootDirectory, blobHash);
             var headerBytes = fullFileContentBytes.TakeWhile(b => b is not 0x00);
             var header = Encoding.UTF8.GetString(headerBytes.ToArray()).Split(' ');
 
@@ -48,7 +48,7 @@ public class LsTree : ICommand
                         var hashBytes = contentsWithoutHeader[hashStart..hashEnd];
                         var treeHash = Convert.ToHexStringLower(hashBytes);
 
-                        treeEntries.Add(new GitTreeEntry(treeHash, mode, type, name));
+                        treeEntries.Add(new GitTreeEntry(treeHash, mode, name));
                         break;
                     }
                 }
@@ -56,5 +56,7 @@ public class LsTree : ICommand
 
             foreach (var treeEntry in treeEntries) Console.WriteLine(treeEntry.Name);
         }
+        
+        return Task.CompletedTask;
     }
 }

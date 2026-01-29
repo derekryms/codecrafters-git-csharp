@@ -2,9 +2,9 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
-public class CommitTree : ICommand
+public class CommitTree(string rootDirectory) : ICommand
 {
-    public void Run(string[] args)
+    public Task Run(string[] args)
     {
         var treeHash = args[0];
         var option1 = args[1];
@@ -15,8 +15,10 @@ public class CommitTree : ICommand
         if (option1 == "-p" && option2 == "-m")
         {
             var commit = new GitCommit(treeHash, parentHash, message);
-            var hash = Helpers.Compress(commit.UncompressedDataBytes);
+            var hash = Helpers.Compress(rootDirectory, commit.UncompressedDataBytes);
             Console.Write(hash);
         }
+        
+        return Task.CompletedTask;
     }
 }

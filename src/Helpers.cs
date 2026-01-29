@@ -11,26 +11,26 @@ public static class Helpers
         return Convert.ToHexStringLower(SHA1.HashData(bytes));
     }
 
-    public static byte[] GetDecompressedBytes(string hash)
+    public static byte[] GetDecompressedBytes(string rootDir, string hash)
     {
         var decompressed = new MemoryStream();
         using var compressedFileStream =
-            File.Open($".git/objects/{hash[..2]}/{hash[2..]}", FileMode.Open, FileAccess.Read);
+            File.Open($"{rootDir}.git/objects/{hash[..2]}/{hash[2..]}", FileMode.Open, FileAccess.Read);
         using var decompressor = new ZLibStream(compressedFileStream, CompressionMode.Decompress);
         decompressor.CopyTo(decompressed);
 
         return decompressed.ToArray();
     }
 
-    public static string Compress(byte[] bytes)
+    public static string Compress(string rootDir, byte[] bytes)
     {
         var hash = GetSha1Hash(bytes);
 
         var fileDirectory = hash[..2];
         var compressedFileName = hash[2..];
-        Directory.CreateDirectory($".git/objects/{fileDirectory}");
+        Directory.CreateDirectory($"{rootDir}.git/objects/{fileDirectory}");
 
-        using var compressedFileStream = File.Create($".git/objects/{fileDirectory}/{compressedFileName}");
+        using var compressedFileStream = File.Create($"{rootDir}.git/objects/{fileDirectory}/{compressedFileName}");
         using var compressor = new ZLibStream(compressedFileStream, CompressionMode.Compress);
         compressor.Write(bytes);
         return hash;
@@ -49,8 +49,7 @@ public static class Helpers
                              unixFileMode.HasFlag(UnixFileMode.GroupExecute) ||
                              unixFileMode.HasFlag(UnixFileMode.UserExecute);
             var mode = hasExecute ? "100755" : "100644";
-            treeEntries.Add(new GitTreeEntry(GetSha1Hash(blob.UncompressedDataBytes), mode, "blob",
-                Path.GetFileName(file)));
+            treeEntries.Add(new GitTreeEntry(GetSha1Hash(blob.UncompressedDataBytes), mode, Path.GetFileName(file)));
         }
 
         foreach (var dir in dirs)
@@ -60,7 +59,7 @@ public static class Helpers
                 continue;
 
             var childTree = GetTreeRecursive(dir);
-            treeEntries.Add(new GitTreeEntry(GetSha1Hash(childTree.UncompressedDataBytes), "40000", "tree", name));
+            treeEntries.Add(new GitTreeEntry(GetSha1Hash(childTree.UncompressedDataBytes), "40000", name));
         }
 
         var tree = new GitTree(treeEntries.OrderBy(t => t.Name).ToList());
@@ -73,5 +72,11 @@ public static class Helpers
         var hours = Math.Abs(offset.Hours);
         var minutes = Math.Abs(offset.Minutes);
         return $"{sign}{hours:D2}{minutes:D2}";
+    }
+    
+    public static string GetPktLine(string content)
+    {
+        var length = content.Length + 4 + 1; // +1 for the newline
+        return $"{length:X4}{content}\n";
     }
 }

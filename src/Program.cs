@@ -12,25 +12,25 @@ var otherArgs = args[1..];
 switch (command)
 {
     case "init":
-        new Init().Run([]);
+        await new Init("").Run([]);
         break;
     case "cat-file":
-        new CatFile().Run(otherArgs);
+        await new CatFile("").Run(otherArgs);
         break;
     case "hash-object":
-        new HashObject().Run(otherArgs);
+        await new HashObject("").Run(otherArgs);
         break;
     case "ls-tree":
-        new LsTree().Run(otherArgs);
+        await new LsTree("").Run(otherArgs);
         break;
     case "write-tree":
-        new WriteTree().Run(otherArgs);
+        await new WriteTree("").Run(otherArgs);
         break;
     case "commit-tree":
-        new CommitTree().Run(otherArgs);
+        await new CommitTree("").Run(otherArgs);
         break;
     case "clone":
-        new Clone().Run(otherArgs);
+        await new Clone().Run(otherArgs);
         break;
     default:
         throw new ArgumentException($"Unknown command {command}");
