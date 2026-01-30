@@ -1,15 +1,14 @@
 using codecrafters_git.Commands;
 using Shouldly;
 using Xunit;
-using System.IO;
 
 namespace codecrafters_git.tests;
 
 public class InitTests : IDisposable
 {
-    private readonly string _tempDirectory;
-    private readonly string _originalDirectory;
     private readonly StringWriter _consoleOutput;
+    private readonly string _originalDirectory;
+    private readonly string _tempDirectory;
 
     public InitTests()
     {
@@ -17,7 +16,7 @@ public class InitTests : IDisposable
         _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);
         Directory.SetCurrentDirectory(_tempDirectory);
-        
+
         _consoleOutput = new StringWriter();
         Console.SetOut(_consoleOutput);
     }
@@ -27,11 +26,11 @@ public class InitTests : IDisposable
         Directory.SetCurrentDirectory(_originalDirectory);
         if (Directory.Exists(_tempDirectory))
         {
-            Directory.Delete(_tempDirectory, recursive: true);
+            Directory.Delete(_tempDirectory, true);
         }
-        
+
         _consoleOutput.Flush();
-        
+
         GC.SuppressFinalize(this);
     }
 
@@ -40,10 +39,10 @@ public class InitTests : IDisposable
     {
         // Arrange
         var initCommand = new Init();
-        
+
         // Act
         initCommand.Execute([]);
-        
+
         // Assert
         var gitDirectory = Path.Combine(_tempDirectory, ".git/");
         Directory.Exists(gitDirectory).ShouldBeTrue();
@@ -51,7 +50,7 @@ public class InitTests : IDisposable
         Directory.Exists(Path.Combine(gitDirectory, "refs")).ShouldBeTrue();
         File.Exists(Path.Combine(gitDirectory, "HEAD")).ShouldBeTrue();
         File.ReadAllText(Path.Combine(gitDirectory, "HEAD")).ShouldBe("ref: refs/heads/main\n");
-        
+
         var output = _consoleOutput.ToString();
         output.ShouldContain("Initialized empty Git repository in");
         output.ShouldContain(gitDirectory);
@@ -63,10 +62,10 @@ public class InitTests : IDisposable
         // Arrange
         var initCommand = new Init();
         var subDirectory = "test-repo";
-        
+
         // Act
         initCommand.Execute([subDirectory]);
-        
+
         // Assert
         var gitDirectory = Path.Combine(_tempDirectory, subDirectory, ".git/");
         Directory.Exists(gitDirectory).ShouldBeTrue();
@@ -74,7 +73,7 @@ public class InitTests : IDisposable
         Directory.Exists(Path.Combine(gitDirectory, "refs")).ShouldBeTrue();
         File.Exists(Path.Combine(gitDirectory, "HEAD")).ShouldBeTrue();
         File.ReadAllText(Path.Combine(gitDirectory, "HEAD")).ShouldBe("ref: refs/heads/main\n");
-        
+
         var output = _consoleOutput.ToString();
         output.ShouldContain("Initialized empty Git repository in");
         output.ShouldContain(gitDirectory);

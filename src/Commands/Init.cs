@@ -5,7 +5,7 @@ public interface ICommand
     void Execute(string[] args);
 }
 
-public class Init() : ICommand
+public class Init : ICommand
 {
     public void Execute(string[] args)
     {
