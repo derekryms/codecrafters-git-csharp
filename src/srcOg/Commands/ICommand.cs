@@ -1,4 +1,4 @@
-namespace codecrafters_git.Commands;
+namespace codecrafters_git.srcOg.Commands;
 
 public interface ICommand
 {

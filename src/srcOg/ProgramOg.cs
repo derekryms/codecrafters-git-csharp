@@ -1,6 +1,6 @@
-using codecrafters_git.Commands;
+using codecrafters_git.srcOg.Commands;
 
-namespace codecrafters_git;
+namespace codecrafters_git.srcOg;
 
 internal class ProgramOg
 {

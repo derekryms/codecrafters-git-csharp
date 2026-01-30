@@ -1,8 +1,8 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
-using codecrafters_git.GitObjects;
+using codecrafters_git.srcOg.GitObjects;
 
-namespace codecrafters_git;
+namespace codecrafters_git.srcOg;
 
 public static class Helpers
 {

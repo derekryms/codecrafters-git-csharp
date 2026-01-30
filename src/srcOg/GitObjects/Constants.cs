@@ -1,4 +1,4 @@
-namespace codecrafters_git.GitObjects;
+namespace codecrafters_git.srcOg.GitObjects;
 
 public static class Constants
 {

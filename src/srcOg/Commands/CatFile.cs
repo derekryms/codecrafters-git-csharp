@@ -1,6 +1,6 @@
-using codecrafters_git.GitObjects;
+using codecrafters_git.srcOg.GitObjects;
 
-namespace codecrafters_git.Commands;
+namespace codecrafters_git.srcOg.Commands;
 
 public class CatFile(string rootDirectory) : ICommand
 {

@@ -1,11 +1,9 @@
-using System.Buffers.Binary;
-using System.IO.Compression;
 using System.Text;
-using System.Text.Json;
-using codecrafters_git.GitObjects;
+using codecrafters_git.srcOg.GitObjects;
+
 // using ICSharpCode.SharpZipLib.Zip.Compression;
 
-namespace codecrafters_git.Commands;
+namespace codecrafters_git.srcOg.Commands;
 
 public class Clone : ICommand
 {
