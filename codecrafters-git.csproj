@@ -6,10 +6,15 @@
         <RootNamespace>codecrafters_git</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <NoWarn>$(NoWarn);7022</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="SharpZipLib" Version="1.4.2" />
+      <PackageReference Include="xunit" Version="2.4.2" />
+      <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     </ItemGroup>
 
 </Project>

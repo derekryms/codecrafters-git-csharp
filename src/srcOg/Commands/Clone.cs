@@ -3,7 +3,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using codecrafters_git.GitObjects;
-using ICSharpCode.SharpZipLib.Zip.Compression;
+// using ICSharpCode.SharpZipLib.Zip.Compression;
 
 namespace codecrafters_git.Commands;
 
@@ -179,21 +179,21 @@ public class Clone : ICommand
     private byte[] DecompressObject(byte[] pack, ref int position, int maxLength)
     {
         using var output = new MemoryStream();
-        var buffer = new byte[4096];
-        
-        var inflater = new Inflater();
-        inflater.SetInput(pack, position, maxLength);
-        
-        while (inflater is { IsFinished: false, IsNeedingInput: false })
-        {
-            var count = inflater.Inflate(buffer);
-            if (count == 0 && inflater.IsNeedingInput)
-                break;
-            
-            output.Write(buffer, 0, count);
-        }
-        
-        position += (int) inflater.TotalIn;
+        // var buffer = new byte[4096];
+        //
+        // var inflater = new Inflater();
+        // inflater.SetInput(pack, position, maxLength);
+        //
+        // while (inflater is { IsFinished: false, IsNeedingInput: false })
+        // {
+        //     var count = inflater.Inflate(buffer);
+        //     if (count == 0 && inflater.IsNeedingInput)
+        //         break;
+        //     
+        //     output.Write(buffer, 0, count);
+        // }
+        //
+        // position += (int) inflater.TotalIn;
         return output.ToArray();
     }
     
