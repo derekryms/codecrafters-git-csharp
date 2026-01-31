@@ -19,7 +19,7 @@ public class RepositoryFactoryTests
         repo.GitDirectory.ShouldBe(Path.Combine(repoDirectory, ".git"));
         repo.ObjectsDirectory.ShouldBe(Path.Combine(repo.GitDirectory, "objects"));
         repo.RefsDirectory.ShouldBe(Path.Combine(repo.GitDirectory, "refs"));
-        repo.HeadPath.ShouldBe(Path.Combine(repo.GitDirectory, "HEAD"));
+        repo.HeadFile.ShouldBe(Path.Combine(repo.GitDirectory, "HEAD"));
     }
 
     [Fact]
@@ -37,6 +37,6 @@ public class RepositoryFactoryTests
         repo.GitDirectory.ShouldBe(Path.Combine(repoDirectory, ".git"));
         repo.ObjectsDirectory.ShouldBe(Path.Combine(repo.GitDirectory, "objects"));
         repo.RefsDirectory.ShouldBe(Path.Combine(repo.GitDirectory, "refs"));
-        repo.HeadPath.ShouldBe(Path.Combine(repo.GitDirectory, "HEAD"));
+        repo.HeadFile.ShouldBe(Path.Combine(repo.GitDirectory, "HEAD"));
     }
 }

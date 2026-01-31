@@ -82,4 +82,19 @@ public class InitTests : IDisposable
         output.ShouldContain("Initialized empty Git repository in");
         output.ShouldContain(gitDirectory);
     }
+
+    [Fact]
+    public void Execute_WithTooManyArgs_ShouldPrintUsage()
+    {
+        // Arrange
+        var repoFactory = new RepositoryFactory();
+        var initCommand = new Init(repoFactory);
+
+        // Act
+        initCommand.Execute(["arg1", "arg2"]);
+
+        // Assert
+        var output = _consoleOutput.ToString();
+        output.ShouldBe("Usage: init [directory]\n");
+    }
 }
