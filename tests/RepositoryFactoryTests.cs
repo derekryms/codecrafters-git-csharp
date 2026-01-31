@@ -3,16 +3,17 @@ using Xunit;
 
 namespace codecrafters_git.tests;
 
-public class RepositoryTests
+public class RepositoryFactoryTests
 {
     [Fact]
     public void CreateAtCurrentDirectory_ShouldSetCorrectPaths()
     {
         // Arrange
         var repoDirectory = Directory.GetCurrentDirectory();
+        var repoFactory = new RepositoryFactory();
 
         // Act
-        var repo = Repository.CreateAtCurrentDirectory();
+        var repo = repoFactory.CreateAtCurrentDirectory();
 
         // Assert
         repo.GitDirectory.ShouldBe(Path.Combine(repoDirectory, ".git"));
@@ -27,9 +28,10 @@ public class RepositoryTests
         // Arrange
         const string specificDirectory = "test";
         var repoDirectory = Path.Combine(Directory.GetCurrentDirectory(), specificDirectory);
+        var repoFactory = new RepositoryFactory();
 
         // Act
-        var repo = Repository.CreateAtSpecificDirectory(specificDirectory);
+        var repo = repoFactory.CreateAtSpecificDirectory(specificDirectory);
 
         // Assert
         repo.GitDirectory.ShouldBe(Path.Combine(repoDirectory, ".git"));

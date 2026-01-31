@@ -1,17 +1,12 @@
 namespace codecrafters_git.Commands;
 
-public interface ICommand
-{
-    void Execute(string[] args);
-}
-
-public class Init : ICommand
+public class Init(RepositoryFactory repoFactory) : ICommand
 {
     public void Execute(string[] args)
     {
         var repo = args.Length > 0
-            ? Repository.CreateAtSpecificDirectory(args[0])
-            : Repository.CreateAtCurrentDirectory();
+            ? repoFactory.CreateAtSpecificDirectory(args[0])
+            : repoFactory.CreateAtCurrentDirectory();
 
         Directory.CreateDirectory(repo.GitDirectory);
         Directory.CreateDirectory(repo.ObjectsDirectory);

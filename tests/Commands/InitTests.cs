@@ -40,7 +40,8 @@ public class InitTests : IDisposable
     public void Execute_WithoutArgs_ShouldCreateRepo()
     {
         // Arrange
-        var initCommand = new Init();
+        var repoFactory = new RepositoryFactory();
+        var initCommand = new Init(repoFactory);
 
         // Act
         initCommand.Execute([]);
@@ -62,7 +63,8 @@ public class InitTests : IDisposable
     public void Execute_WithArgs_ShouldCreateRepoInSpecificDirectory()
     {
         // Arrange
-        var initCommand = new Init();
+        var repoFactory = new RepositoryFactory();
+        var initCommand = new Init(repoFactory);
         const string specificDirectory = "test";
 
         // Act
