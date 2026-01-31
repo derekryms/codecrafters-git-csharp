@@ -28,4 +28,9 @@ public class FileSystem : IFileSystem
     {
         return File.Exists(path);
     }
+
+    public Stream OpenRead(string path)
+    {
+        return File.OpenRead(path);
+    }
 }

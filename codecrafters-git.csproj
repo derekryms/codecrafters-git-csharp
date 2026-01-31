@@ -20,8 +20,4 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="tests\TestHelpers\" />
-    </ItemGroup>
-
 </Project>

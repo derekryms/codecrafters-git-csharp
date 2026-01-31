@@ -7,4 +7,5 @@ public interface IFileSystem
     void WriteAllText(string path, string contents);
     bool DirectoryExists(string path);
     bool FileExists(string path);
+    Stream OpenRead(string path);
 }

@@ -31,7 +31,7 @@ static void ConfigureServices(IServiceCollection services)
     services.AddSingleton<IFileSystem, FileSystem>();
     services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
     services.AddSingleton<IObjectLocator, ObjectLocator>();
-    services.AddSingleton<ICompressionService, CompressionService>();
+    services.AddSingleton<ICompressionService, ZLibCompressionService>();
     services.AddSingleton<IObjectParser, ObjectParser>();
     services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();
 
