@@ -2,20 +2,23 @@ using codecrafters_git.Commands;
 using Shouldly;
 using Xunit;
 
-namespace codecrafters_git.tests;
+namespace codecrafters_git.tests.Commands;
 
 public class InitTests : IDisposable
 {
     private readonly StringWriter _consoleOutput;
     private readonly string _originalDirectory;
-    private readonly string _tempDirectory;
+    private readonly string _tempRepoDirectory;
 
     public InitTests()
     {
         _originalDirectory = Directory.GetCurrentDirectory();
-        _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(_tempDirectory);
-        Directory.SetCurrentDirectory(_tempDirectory);
+        var tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDirectory);
+        Directory.SetCurrentDirectory(tempDirectory);
+
+        // This resolves the symlink on macOS so adds the /private
+        _tempRepoDirectory = Directory.GetCurrentDirectory();
 
         _consoleOutput = new StringWriter();
         Console.SetOut(_consoleOutput);
@@ -24,18 +27,17 @@ public class InitTests : IDisposable
     public void Dispose()
     {
         Directory.SetCurrentDirectory(_originalDirectory);
-        if (Directory.Exists(_tempDirectory))
-        {
-            Directory.Delete(_tempDirectory, true);
-        }
 
-        _consoleOutput.Flush();
+        if (Directory.Exists(_tempRepoDirectory))
+        {
+            Directory.Delete(_tempRepoDirectory, true);
+        }
 
         GC.SuppressFinalize(this);
     }
 
     [Fact]
-    public void Init_Execute_WithoutDirectory_ShouldCreateNewRepo()
+    public void Execute_WithoutArgs_ShouldCreateRepo()
     {
         // Arrange
         var initCommand = new Init();
@@ -44,7 +46,7 @@ public class InitTests : IDisposable
         initCommand.Execute([]);
 
         // Assert
-        var gitDirectory = Path.Combine(_tempDirectory, ".git/");
+        var gitDirectory = Path.Combine(_tempRepoDirectory, ".git/");
         Directory.Exists(gitDirectory).ShouldBeTrue();
         Directory.Exists(Path.Combine(gitDirectory, "objects")).ShouldBeTrue();
         Directory.Exists(Path.Combine(gitDirectory, "refs")).ShouldBeTrue();
@@ -57,17 +59,17 @@ public class InitTests : IDisposable
     }
 
     [Fact]
-    public void Init_Execute_WithDirectory_ShouldCreateRepoInSpecifiedDirectory()
+    public void Execute_WithArgs_ShouldCreateRepoInSpecificDirectory()
     {
         // Arrange
         var initCommand = new Init();
-        var subDirectory = "test-repo";
+        const string specificDirectory = "test";
 
         // Act
-        initCommand.Execute([subDirectory]);
+        initCommand.Execute([specificDirectory]);
 
         // Assert
-        var gitDirectory = Path.Combine(_tempDirectory, subDirectory, ".git/");
+        var gitDirectory = Path.Combine(_tempRepoDirectory, specificDirectory, ".git");
         Directory.Exists(gitDirectory).ShouldBeTrue();
         Directory.Exists(Path.Combine(gitDirectory, "objects")).ShouldBeTrue();
         Directory.Exists(Path.Combine(gitDirectory, "refs")).ShouldBeTrue();
