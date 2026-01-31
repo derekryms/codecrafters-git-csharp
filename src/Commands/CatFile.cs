@@ -4,6 +4,7 @@ namespace codecrafters_git.Commands;
 
 public class CatFile(
     IRepositoryFactory repoFactory,
+    IObjectLocator objectLocator,
     ICompressionService compressionService,
     IObjectParser objectParser,
     IOutputWriter output) : ICommand
@@ -21,7 +22,7 @@ public class CatFile(
         }
 
         var repo = repoFactory.CreateAtCurrentDirectory();
-        var objectPath = repo.GetGitObjectFilePath(args[1]);
+        var objectPath = objectLocator.GetGitObjectFilePath(repo, args[1]);
         var decompressedBytes = compressionService.GetDecompressedObject(objectPath);
         var (type, content) = objectParser.ParseGitObject(decompressedBytes);
 

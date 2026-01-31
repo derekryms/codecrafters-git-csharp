@@ -9,8 +9,8 @@ namespace codecrafters_git.tests.Commands;
 public class InitTests
 {
     private readonly IFileSystem _fileSystem;
-    private readonly IOutputWriter _outputWriter;
     private readonly Repository _mockRepo;
+    private readonly IOutputWriter _outputWriter;
     private readonly IRepositoryFactory _repoFactory;
 
     public InitTests()

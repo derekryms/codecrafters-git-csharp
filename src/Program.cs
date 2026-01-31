@@ -27,10 +27,10 @@ return;
 
 static void ConfigureServices(IServiceCollection services)
 {
-
     // Infrastructure
     services.AddSingleton<IFileSystem, FileSystem>();
     services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
+    services.AddSingleton<IObjectLocator, ObjectLocator>();
     services.AddSingleton<ICompressionService, CompressionService>();
     services.AddSingleton<IObjectParser, ObjectParser>();
     services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();

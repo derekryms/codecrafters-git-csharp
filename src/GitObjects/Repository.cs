@@ -6,42 +6,4 @@ public class Repository(string repoDirectory)
     public string ObjectsDirectory => Path.Combine(GitDirectory, "objects");
     public string RefsDirectory => Path.Combine(GitDirectory, "refs");
     public string HeadFile => Path.Combine(GitDirectory, "HEAD");
-
-    private string ComputeGitObjectFilePath(string objectHash)
-    {
-        var directory = objectHash[..2];
-        var file = objectHash[2..];
-        return Path.Combine(ObjectsDirectory, directory, file);
-    }
-
-    public string GetGitObjectFilePath(string objectHash)
-    {
-        var objectPath = ComputeGitObjectFilePath(objectHash);
-        return !File.Exists(objectPath)
-            ? throw new FileNotFoundException($"Object with hash {objectHash} not found.")
-            : objectPath;
-    }
 }
-
-// public interface IGitObjectLocator
-// {
-//     string GetGitObjectFilePath(string objectHash);
-// }
-//
-// public class GitObjectLocator(IFileSystem fileSystem, Repository repo) : IGitObjectLocator
-// {
-//     public string GetGitObjectFilePath(string objectHash)
-//     {
-//         var objectPath = ComputeGitObjectFilePath(objectHash);
-//         return !fileSystem.FileExists(objectPath)
-//             ? throw new FileNotFoundException($"Object with hash {objectHash} not found.")
-//             : objectPath;
-//     }
-//     
-//     private string ComputeGitObjectFilePath(string objectHash)
-//     {
-//         var directory = objectHash[..2];
-//         var file = objectHash[2..];
-//         return Path.Combine(repo.ObjectsDirectory, directory, file);
-//     }
-// }
