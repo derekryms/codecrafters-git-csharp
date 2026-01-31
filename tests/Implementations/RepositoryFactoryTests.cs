@@ -1,4 +1,6 @@
+using codecrafters_git.Abstractions;
 using codecrafters_git.Implementations;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -6,12 +8,15 @@ namespace codecrafters_git.tests.Implementations;
 
 public class RepositoryFactoryTests
 {
+    private readonly IFileSystem _fileSystem = Substitute.For<IFileSystem>();
+
     [Fact]
     public void CreateAtCurrentDirectory_ShouldSetCorrectPaths()
     {
         // Arrange
-        var repoDirectory = Directory.GetCurrentDirectory();
-        var repoFactory = new RepositoryFactory();
+        const string repoDirectory = "/test/repo";
+        _fileSystem.GetCurrentDirectory().Returns(repoDirectory);
+        var repoFactory = new RepositoryFactory(_fileSystem);
 
         // Act
         var repo = repoFactory.CreateAtCurrentDirectory();
@@ -28,8 +33,10 @@ public class RepositoryFactoryTests
     {
         // Arrange
         const string specificDirectory = "test";
-        var repoDirectory = Path.Combine(Directory.GetCurrentDirectory(), specificDirectory);
-        var repoFactory = new RepositoryFactory();
+        const string currentDirectory = "/test/repo";
+        _fileSystem.GetCurrentDirectory().Returns(currentDirectory);
+        var repoFactory = new RepositoryFactory(_fileSystem);
+        var repoDirectory = Path.Combine(currentDirectory, specificDirectory);
 
         // Act
         var repo = repoFactory.CreateAtSpecificDirectory(specificDirectory);

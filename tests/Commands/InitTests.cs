@@ -10,10 +10,19 @@ namespace codecrafters_git.tests.Commands;
 
 public class InitTests
 {
-    private readonly IFileSystem _fileSystem = Substitute.For<IFileSystem>();
-    private readonly ILogger<Init> _logger = Substitute.For<ILogger<Init>>();
-    private readonly Repository _mockRepo = new("/test/repo");
-    private readonly IRepositoryFactory _repoFactory = Substitute.For<IRepositoryFactory>();
+    private readonly IFileSystem _fileSystem;
+    private readonly ILogger<Init> _logger;
+    private readonly Repository _mockRepo;
+    private readonly IRepositoryFactory _repoFactory;
+
+    public InitTests()
+    {
+        _fileSystem = Substitute.For<IFileSystem>();
+        _repoFactory = Substitute.For<IRepositoryFactory>();
+        _logger = Substitute.For<ILogger<Init>>();
+        _repoFactory = Substitute.For<IRepositoryFactory>();
+        _mockRepo = new Repository("/test/repo");
+    }
 
     [Fact]
     public void Execute_WithoutArgs_ShouldCreateRepo()

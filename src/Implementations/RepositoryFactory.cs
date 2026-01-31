@@ -3,15 +3,15 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Implementations;
 
-public class RepositoryFactory : IRepositoryFactory
+public class RepositoryFactory(IFileSystem fileSystem) : IRepositoryFactory
 {
     public Repository CreateAtSpecificDirectory(string specificDirectory)
     {
-        return new Repository(Path.Combine(Directory.GetCurrentDirectory(), specificDirectory));
+        return new Repository(Path.Combine(fileSystem.GetCurrentDirectory(), specificDirectory));
     }
 
     public Repository CreateAtCurrentDirectory()
     {
-        return CreateAtSpecificDirectory(Directory.GetCurrentDirectory());
+        return CreateAtSpecificDirectory(fileSystem.GetCurrentDirectory());
     }
 }

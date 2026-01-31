@@ -1,6 +1,6 @@
 namespace codecrafters_git.GitObjects;
 
-public enum GitObjectType
+public enum ObjectType
 {
     Blob,
     Tree,

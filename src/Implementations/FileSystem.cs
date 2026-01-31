@@ -4,6 +4,11 @@ namespace codecrafters_git.Implementations;
 
 public class FileSystem : IFileSystem
 {
+    public string GetCurrentDirectory()
+    {
+        return Directory.GetCurrentDirectory();
+    }
+
     public void CreateDirectory(string path)
     {
         Directory.CreateDirectory(path);
