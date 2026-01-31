@@ -1,10 +1,11 @@
 using System.Text;
+using codecrafters_git.GitObjects;
 
-namespace codecrafters_git.GitObjects;
+namespace codecrafters_git.Implementations;
 
-public class GitObjectHelpers
+public static class GitObjectHelpers
 {
-    public static GitObjectType GetTypeFromBytes(byte[] typeBytes)
+    private static GitObjectType GetTypeFromBytes(byte[] typeBytes)
     {
         var typeString = Encoding.ASCII.GetString(typeBytes);
         return typeString switch
@@ -17,7 +18,7 @@ public class GitObjectHelpers
         };
     }
 
-    public static int GetLengthFromBytes(byte[] lengthBytes)
+    private static int GetLengthFromBytes(byte[] lengthBytes)
     {
         var lengthString = Encoding.ASCII.GetString(lengthBytes);
         var valid = int.TryParse(lengthString, out var length);

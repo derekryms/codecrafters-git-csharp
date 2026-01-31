@@ -1,4 +1,6 @@
-namespace codecrafters_git;
+using codecrafters_git.Abstractions;
+
+namespace codecrafters_git.Implementations;
 
 public class FileSystem : IFileSystem
 {

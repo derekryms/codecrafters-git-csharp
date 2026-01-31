@@ -1,7 +1,8 @@
+using codecrafters_git.Implementations;
 using Shouldly;
 using Xunit;
 
-namespace codecrafters_git.tests;
+namespace codecrafters_git.tests.Implementations;
 
 public class RepositoryFactoryTests
 {

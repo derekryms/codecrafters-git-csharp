@@ -1,7 +1,8 @@
+using codecrafters_git.Abstractions;
 using codecrafters_git.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace codecrafters_git;
+namespace codecrafters_git.Implementations;
 
 public class CommandResolver(IServiceProvider serviceProvider) : ICommandResolver
 {

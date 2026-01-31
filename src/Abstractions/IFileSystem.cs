@@ -1,4 +1,4 @@
-namespace codecrafters_git;
+namespace codecrafters_git.Abstractions;
 
 public interface IFileSystem
 {

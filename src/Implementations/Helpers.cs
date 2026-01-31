@@ -1,8 +1,8 @@
 using System.IO.Compression;
 
-namespace codecrafters_git;
+namespace codecrafters_git.Implementations;
 
-public class Helpers
+public static class Helpers
 {
     public static byte[] GetDecompressedObject(string objectPath)
     {

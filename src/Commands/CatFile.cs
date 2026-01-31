@@ -1,4 +1,6 @@
+using codecrafters_git.Abstractions;
 using codecrafters_git.GitObjects;
+using codecrafters_git.Implementations;
 
 namespace codecrafters_git.Commands;
 
@@ -24,10 +26,10 @@ public class CatFile(IRepositoryFactory repoFactory) : ICommand
         switch (args[0])
         {
             case "-p":
-                Console.WriteLine(content);
+                Console.Write(content);
                 break;
             case "-t":
-                Console.WriteLine(type.ToString().ToLower());
+                Console.Write(type.ToString().ToLower());
                 break;
         }
     }

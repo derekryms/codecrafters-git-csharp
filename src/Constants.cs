@@ -1,6 +1,6 @@
 namespace codecrafters_git;
 
-public class Constants
+public static class Constants
 {
     public const byte NullByte = 0;
     public const byte SpaceByte = 32;

@@ -1,13 +1,16 @@
+using codecrafters_git.Abstractions;
+using Microsoft.Extensions.Logging;
+
 namespace codecrafters_git.Commands;
 
-public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem) : ICommand
+public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem, ILogger<Init> logger) : ICommand
 {
     public void Execute(string[] args)
     {
         switch (args.Length)
         {
             case > 1:
-                Console.WriteLine("Usage: init [directory]");
+                logger.LogWarning("Usage: init [directory]");
                 return;
         }
 
@@ -19,6 +22,6 @@ public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem) : ICom
         fileSystem.CreateDirectory(repo.ObjectsDirectory);
         fileSystem.CreateDirectory(repo.RefsDirectory);
         fileSystem.WriteAllText(repo.HeadFile, "ref: refs/heads/main\n");
-        Console.WriteLine($"Initialized empty Git repository in {repo.GitDirectory}/");
+        logger.LogInformation("Initialized empty Git repository in {GitDirectory}/", repo.GitDirectory);
     }
 }

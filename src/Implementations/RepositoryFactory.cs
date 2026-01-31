@@ -1,4 +1,7 @@
-namespace codecrafters_git;
+using codecrafters_git.Abstractions;
+using codecrafters_git.GitObjects;
+
+namespace codecrafters_git.Implementations;
 
 public class RepositoryFactory : IRepositoryFactory
 {
