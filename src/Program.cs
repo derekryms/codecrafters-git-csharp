@@ -2,7 +2,6 @@ using codecrafters_git.Abstractions;
 using codecrafters_git.Commands;
 using codecrafters_git.Implementations;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 if (args.Length < 1)
 {
@@ -28,18 +27,13 @@ return;
 
 static void ConfigureServices(IServiceCollection services)
 {
-    // Logging
-    services.AddLogging(builder =>
-    {
-        builder.AddConsole();
-        builder.SetMinimumLevel(LogLevel.Information);
-    });
 
     // Infrastructure
     services.AddSingleton<IFileSystem, FileSystem>();
     services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
     services.AddSingleton<ICompressionService, CompressionService>();
     services.AddSingleton<IObjectParser, ObjectParser>();
+    services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();
 
     // Command resolver
     services.AddSingleton<ICommandResolver, CommandResolver>();

@@ -1,5 +1,4 @@
 using codecrafters_git.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace codecrafters_git.Commands;
 
@@ -7,17 +6,17 @@ public class CatFile(
     IRepositoryFactory repoFactory,
     ICompressionService compressionService,
     IObjectParser objectParser,
-    ILogger<CatFile> logger) : ICommand
+    IOutputWriter output) : ICommand
 {
     public void Execute(string[] args)
     {
         switch (args.Length)
         {
             case < 2 or > 2:
-                logger.LogWarning("Usage: cat-file (-p | -t) <object>");
+                output.WriteLine("Usage: cat-file (-p | -t) <object>");
                 return;
             case 2 when args[0] is not "-p" and not "-t":
-                logger.LogWarning("Only -p and -t options supported.");
+                output.WriteLine("Only -p and -t options supported.");
                 return;
         }
 
@@ -29,10 +28,10 @@ public class CatFile(
         switch (args[0])
         {
             case "-p":
-                logger.LogInformation("{Content}", content);
+                output.Write(content);
                 break;
             case "-t":
-                logger.LogInformation("{Type}", type.ToString().ToLower());
+                output.Write(type.ToString().ToLower());
                 break;
         }
     }

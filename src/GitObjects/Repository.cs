@@ -22,3 +22,26 @@ public class Repository(string repoDirectory)
             : objectPath;
     }
 }
+
+// public interface IGitObjectLocator
+// {
+//     string GetGitObjectFilePath(string objectHash);
+// }
+//
+// public class GitObjectLocator(IFileSystem fileSystem, Repository repo) : IGitObjectLocator
+// {
+//     public string GetGitObjectFilePath(string objectHash)
+//     {
+//         var objectPath = ComputeGitObjectFilePath(objectHash);
+//         return !fileSystem.FileExists(objectPath)
+//             ? throw new FileNotFoundException($"Object with hash {objectHash} not found.")
+//             : objectPath;
+//     }
+//     
+//     private string ComputeGitObjectFilePath(string objectHash)
+//     {
+//         var directory = objectHash[..2];
+//         var file = objectHash[2..];
+//         return Path.Combine(repo.ObjectsDirectory, directory, file);
+//     }
+// }
