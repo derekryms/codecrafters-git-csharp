@@ -1,6 +1,6 @@
 namespace codecrafters_git.Commands;
 
-public class Init(RepositoryFactory repoFactory) : ICommand
+public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem) : ICommand
 {
     public void Execute(string[] args)
     {
@@ -15,10 +15,10 @@ public class Init(RepositoryFactory repoFactory) : ICommand
             ? repoFactory.CreateAtSpecificDirectory(args[0])
             : repoFactory.CreateAtCurrentDirectory();
 
-        Directory.CreateDirectory(repo.GitDirectory);
-        Directory.CreateDirectory(repo.ObjectsDirectory);
-        Directory.CreateDirectory(repo.RefsDirectory);
-        File.WriteAllText(repo.HeadFile, "ref: refs/heads/main\n");
+        fileSystem.CreateDirectory(repo.GitDirectory);
+        fileSystem.CreateDirectory(repo.ObjectsDirectory);
+        fileSystem.CreateDirectory(repo.RefsDirectory);
+        fileSystem.WriteAllText(repo.HeadFile, "ref: refs/heads/main\n");
         Console.WriteLine($"Initialized empty Git repository in {repo.GitDirectory}/");
     }
 }

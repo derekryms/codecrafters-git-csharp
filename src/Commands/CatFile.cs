@@ -2,7 +2,7 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
-public class CatFile(Repository repo) : ICommand
+public class CatFile(IRepositoryFactory repoFactory) : ICommand
 {
     public void Execute(string[] args)
     {
@@ -16,6 +16,7 @@ public class CatFile(Repository repo) : ICommand
                 return;
         }
 
+        var repo = repoFactory.CreateAtCurrentDirectory();
         var objectPath = repo.GetGitObjectFilePath(args[1]);
         var decompressedBytes = Helpers.GetDecompressedObject(objectPath);
         var (type, content) = GitObjectHelpers.ParseGitObject(decompressedBytes);

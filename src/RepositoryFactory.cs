@@ -1,6 +1,6 @@
 namespace codecrafters_git;
 
-public class RepositoryFactory
+public class RepositoryFactory : IRepositoryFactory
 {
     public Repository CreateAtSpecificDirectory(string specificDirectory)
     {

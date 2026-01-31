@@ -41,7 +41,8 @@ public class InitTests : IDisposable
     {
         // Arrange
         var repoFactory = new RepositoryFactory();
-        var initCommand = new Init(repoFactory);
+        var fileSystem = new FileSystem();
+        var initCommand = new Init(repoFactory, fileSystem);
 
         // Act
         initCommand.Execute([]);
@@ -64,7 +65,8 @@ public class InitTests : IDisposable
     {
         // Arrange
         var repoFactory = new RepositoryFactory();
-        var initCommand = new Init(repoFactory);
+        var fileSystem = new FileSystem();
+        var initCommand = new Init(repoFactory, fileSystem);
         const string specificDirectory = "test";
 
         // Act
@@ -88,7 +90,8 @@ public class InitTests : IDisposable
     {
         // Arrange
         var repoFactory = new RepositoryFactory();
-        var initCommand = new Init(repoFactory);
+        var fileSystem = new FileSystem();
+        var initCommand = new Init(repoFactory, fileSystem);
 
         // Act
         initCommand.Execute(["arg1", "arg2"]);
