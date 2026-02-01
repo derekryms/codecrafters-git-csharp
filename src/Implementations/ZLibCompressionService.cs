@@ -14,4 +14,11 @@ public class ZLibCompressionService(IFileSystem fileSystem) : ICompressionServic
 
         return decompressedStream.ToArray();
     }
+
+    public void SaveCompressedObject(string objectPath, byte[] objectBytes)
+    {
+        using var fileStream = fileSystem.OpenWrite(objectPath);
+        using var zLibStream = new ZLibStream(fileStream, CompressionMode.Compress);
+        zLibStream.Write(objectBytes);
+    }
 }

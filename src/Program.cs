@@ -33,6 +33,7 @@ static void ConfigureServices(IServiceCollection services)
     services.AddSingleton<IObjectLocator, ObjectLocator>();
     services.AddSingleton<ICompressionService, ZLibCompressionService>();
     services.AddSingleton<IObjectParser, ObjectParser>();
+    services.AddSingleton<IObjectBuilder, ObjectBuilder>();
     services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();
 
     // Command resolver
@@ -41,4 +42,5 @@ static void ConfigureServices(IServiceCollection services)
     // Commands
     services.AddTransient<Init>();
     services.AddTransient<CatFile>();
+    services.AddTransient<HashObject>();
 }

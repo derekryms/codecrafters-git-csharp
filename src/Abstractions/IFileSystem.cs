@@ -8,4 +8,6 @@ public interface IFileSystem
     bool DirectoryExists(string path);
     bool FileExists(string path);
     Stream OpenRead(string path);
+    Stream OpenWrite(string path);
+    byte[] ReadAllBytes(string file);
 }

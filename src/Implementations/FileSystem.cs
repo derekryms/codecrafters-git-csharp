@@ -33,4 +33,14 @@ public class FileSystem : IFileSystem
     {
         return File.OpenRead(path);
     }
+
+    public Stream OpenWrite(string path)
+    {
+        return File.OpenWrite(path);
+    }
+
+    public byte[] ReadAllBytes(string file)
+    {
+        return File.ReadAllBytes(file);
+    }
 }

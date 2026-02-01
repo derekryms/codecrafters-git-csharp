@@ -9,7 +9,8 @@ public class CommandResolver(IServiceProvider serviceProvider) : ICommandResolve
     private static readonly Dictionary<string, Type> CommandTypes = new()
     {
         { "init", typeof(Init) },
-        { "cat-file", typeof(CatFile) }
+        { "cat-file", typeof(CatFile) },
+        { "hash-object", typeof(HashObject) }
     };
 
     public ICommand? Resolve(string commandName)
