@@ -4,6 +4,7 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
+[GitCommand("hash-object")]
 public class HashObject(
     IRepositoryFactory repoFactory,
     IFileSystem fileSystem,

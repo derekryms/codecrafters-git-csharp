@@ -1,5 +1,5 @@
+using codecrafters_git;
 using codecrafters_git.Abstractions;
-using codecrafters_git.Commands;
 using codecrafters_git.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,8 +39,18 @@ static void ConfigureServices(IServiceCollection services)
     // Command resolver
     services.AddSingleton<ICommandResolver, CommandResolver>();
 
-    // Commands
-    services.AddTransient<Init>();
-    services.AddTransient<CatFile>();
-    services.AddTransient<HashObject>();
+    RegisterGitCommands(services);
+}
+
+static void RegisterGitCommands(IServiceCollection serviceCollection)
+{
+    // Automatically register all ICommand implementations with GitCommandAttribute
+    var commandTypes = typeof(Program).Assembly.GetTypes()
+        .Where(t => typeof(ICommand).IsAssignableFrom(t) && !t.IsAbstract &&
+                    t.GetCustomAttributes(typeof(GitCommandAttribute), false).Length != 0);
+
+    foreach (var type in commandTypes)
+    {
+        serviceCollection.AddTransient(type);
+    }
 }

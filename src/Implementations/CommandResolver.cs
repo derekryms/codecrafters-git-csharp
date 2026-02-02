@@ -1,17 +1,24 @@
+using System.Reflection;
 using codecrafters_git.Abstractions;
-using codecrafters_git.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace codecrafters_git.Implementations;
 
 public class CommandResolver(IServiceProvider serviceProvider) : ICommandResolver
 {
-    private static readonly Dictionary<string, Type> CommandTypes = new()
+    private static readonly Dictionary<string, Type> CommandTypes;
+
+    static CommandResolver()
     {
-        { "init", typeof(Init) },
-        { "cat-file", typeof(CatFile) },
-        { "hash-object", typeof(HashObject) }
-    };
+        CommandTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => typeof(ICommand).IsAssignableFrom(t) && !t.IsAbstract &&
+                        t.GetCustomAttribute<GitCommandAttribute>() != null)
+            .ToDictionary(
+                t => t.GetCustomAttribute<GitCommandAttribute>()!.Name,
+                t => t
+            );
+    }
 
     public ICommand? Resolve(string commandName)
     {

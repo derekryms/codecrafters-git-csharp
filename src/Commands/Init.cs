@@ -2,6 +2,7 @@ using codecrafters_git.Abstractions;
 
 namespace codecrafters_git.Commands;
 
+[GitCommand("init")]
 public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem, IOutputWriter output) : ICommand
 {
     public void Execute(string[] args)

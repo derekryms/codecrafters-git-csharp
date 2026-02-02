@@ -2,6 +2,7 @@ using codecrafters_git.Abstractions;
 
 namespace codecrafters_git.Commands;
 
+[GitCommand("cat-file")]
 public class CatFile(
     IRepositoryFactory repoFactory,
     IObjectLocator objectLocator,
