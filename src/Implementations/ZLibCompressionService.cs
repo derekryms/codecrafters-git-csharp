@@ -8,9 +8,9 @@ public class ZLibCompressionService(IFileSystem fileSystem) : ICompressionServic
     public byte[] GetDecompressedObject(string objectPath)
     {
         using var fileStream = fileSystem.OpenRead(objectPath);
-        using var zLibStream = new ZLibStream(fileStream, CompressionMode.Decompress);
+        using var decompressor = new ZLibStream(fileStream, CompressionMode.Decompress);
         using var decompressedStream = new MemoryStream();
-        zLibStream.CopyTo(decompressedStream);
+        decompressor.CopyTo(decompressedStream);
 
         return decompressedStream.ToArray();
     }
@@ -18,7 +18,7 @@ public class ZLibCompressionService(IFileSystem fileSystem) : ICompressionServic
     public void SaveCompressedObject(string objectPath, byte[] objectBytes)
     {
         using var fileStream = fileSystem.OpenWrite(objectPath);
-        using var zLibStream = new ZLibStream(fileStream, CompressionMode.Compress);
-        zLibStream.Write(objectBytes);
+        using var compressor = new ZLibStream(fileStream, CompressionMode.Compress);
+        compressor.Write(objectBytes);
     }
 }

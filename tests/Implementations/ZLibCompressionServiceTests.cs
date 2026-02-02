@@ -28,6 +28,35 @@ public class ZLibCompressionServiceTests
         result.ShouldBe(originalContent);
     }
 
+    [Fact]
+    public void SaveCompressedObject_ShouldCreateFileAndWriteCompressedData()
+    {
+        // Arrange
+        var originalContent = "blob 12\0Hello World!"u8.ToArray();
+        const string objectPath = "/test/repo/.git/objects/ab/cd1234";
+        var writeStream = new MemoryStream();
+        _fileSystem.OpenWrite(objectPath).Returns(writeStream);
+        var compressionService = new ZLibCompressionService(_fileSystem);
+
+        // Act
+        compressionService.SaveCompressedObject(objectPath, originalContent);
+
+        // Assert
+        _fileSystem.Received(1).OpenWrite(objectPath);
+        var decompressedData = DecompressBytes(writeStream.ToArray());
+        decompressedData.ShouldBe(originalContent);
+    }
+
+    private static byte[] DecompressBytes(byte[] compressedBytes)
+    {
+        using var compressedStream = new MemoryStream(compressedBytes);
+        using var decompressor = new ZLibStream(compressedStream, CompressionMode.Decompress);
+        using var decompressedStream = new MemoryStream();
+        decompressor.CopyTo(decompressedStream);
+
+        return decompressedStream.ToArray();
+    }
+
     private static MemoryStream CreateZlibCompressedStream(byte[] content)
     {
         var compressedStream = new MemoryStream();

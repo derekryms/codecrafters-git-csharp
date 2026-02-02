@@ -42,4 +42,25 @@ public class ObjectLocatorTests
             locator.GetGitObjectFilePath(_repo, objectHash));
         exception.Message.ShouldContain(objectHash);
     }
+
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 0)]
+    public void CreateGitObjectDirectory_ShouldReturnFullPath_AndShouldOnlyCreateDirectoryIfNotExists(
+        bool directoryExists, int directoryCreateCalls)
+    {
+        // Arrange
+        const string objectHash = "abc123def456";
+        var expectedDirPath = Path.Combine(_repo.ObjectsDirectory, "ab");
+        var expectedFilePath = Path.Combine(expectedDirPath, "c123def456");
+        _fileSystem.DirectoryExists(expectedDirPath).Returns(directoryExists);
+        var locator = new ObjectLocator(_fileSystem);
+
+        // Act
+        var result = locator.CreateGitObjectDirectory(_repo, objectHash);
+
+        // Assert
+        _fileSystem.Received(directoryCreateCalls).CreateDirectory(expectedDirPath);
+        result.ShouldBe(expectedFilePath);
+    }
 }

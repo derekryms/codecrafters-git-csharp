@@ -9,7 +9,6 @@ public class HashObject(
     IFileSystem fileSystem,
     IObjectLocator objectLocator,
     ICompressionService compressionService,
-    IObjectParser objectParser,
     IObjectBuilder objectBuilder,
     IOutputWriter output) : ICommand
 {

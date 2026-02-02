@@ -9,7 +9,7 @@ public class ObjectBuilder : IObjectBuilder
     public byte[] BuildGitObject(ObjectType type, byte[] content)
     {
         var header = $"{type.ToString().ToLower()} {content.Length}\0";
-        var headerBytes = Encoding.UTF8.GetBytes(header);
+        var headerBytes = Encoding.ASCII.GetBytes(header);
         return [..headerBytes, ..content];
     }
 }
