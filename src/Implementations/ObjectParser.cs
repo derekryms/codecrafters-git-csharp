@@ -45,27 +45,12 @@ public class ObjectParser : IObjectParser
     {
         var treeEntries = new List<TreeEntry>();
 
-        var spaceByteIndex = 0;
         var entryEndIndex = 0;
         var i = 0;
         while (i < treeContentBytes.Length)
         {
-            var currentByte = treeContentBytes[i];
-            if (currentByte is Constants.SpaceByte)
-            {
-                spaceByteIndex = i;
-                i++;
-                continue;
-            }
-
-            if (currentByte is not Constants.NullByte)
-            {
-                i++;
-                continue;
-            }
-
-            var nullByteIndex = i;
-            var shaStartIndex = nullByteIndex + 1;
+            var spaceByteIndex = FindSpaceByte(treeContentBytes, i);
+            var nullByteIndex = FindNullByte(treeContentBytes, spaceByteIndex);
 
             var modeBytes = treeContentBytes[entryEndIndex..spaceByteIndex];
             var mode = GetModeFromBytes(modeBytes);
@@ -73,6 +58,7 @@ public class ObjectParser : IObjectParser
             var nameBytes = treeContentBytes[(spaceByteIndex + 1)..nullByteIndex];
             var name = Encoding.ASCII.GetString(nameBytes);
 
+            var shaStartIndex = nullByteIndex + 1;
             entryEndIndex = shaStartIndex + Constants.ShaByteLength;
             var shaBytes = treeContentBytes[shaStartIndex..entryEndIndex];
             var sha = Convert.ToHexStringLower(shaBytes);
@@ -125,6 +111,52 @@ public class ObjectParser : IObjectParser
         var lengthString = Encoding.ASCII.GetString(lengthBytes);
         var valid = int.TryParse(lengthString, out var length);
         return !valid ? throw new ArgumentException($"Invalid length bytes: {lengthString}") : length;
+    }
+
+    private static int FindSpaceByte(byte[] treeContentBytes, int i)
+    {
+        // Find space byte (separates mode from name)
+        var spaceByteIndex = -1;
+        for (var j = i; j < treeContentBytes.Length; j++)
+        {
+            if (treeContentBytes[j] != Constants.SpaceByte)
+            {
+                continue;
+            }
+
+            spaceByteIndex = j;
+            break;
+        }
+
+        if (spaceByteIndex == -1)
+        {
+            throw new ArgumentException("Invalid tree entry: no space byte found.");
+        }
+
+        return spaceByteIndex;
+    }
+
+    private static int FindNullByte(byte[] treeContentBytes, int spaceByteIndex)
+    {
+        // Find null byte (separates name from SHA)
+        var nullByteIndex = -1;
+        for (var j = spaceByteIndex + 1; j < treeContentBytes.Length; j++)
+        {
+            if (treeContentBytes[j] != Constants.NullByte)
+            {
+                continue;
+            }
+
+            nullByteIndex = j;
+            break;
+        }
+
+        if (nullByteIndex == -1)
+        {
+            throw new ArgumentException("Invalid tree entry: no null byte found.");
+        }
+
+        return nullByteIndex;
     }
 
     private static TreeEntryMode GetModeFromBytes(byte[] modeBytes)

@@ -5,10 +5,8 @@ namespace codecrafters_git.Commands;
 [GitCommand("ls-tree")]
 public class LsTree(
     IRepositoryFactory repoFactory,
-    IFileSystem fileSystem,
     IObjectLocator objectLocator,
     ICompressionService compressionService,
-    IObjectBuilder objectBuilder,
     IObjectParser objectParser,
     IOutputWriter output) : ICommand
 {
