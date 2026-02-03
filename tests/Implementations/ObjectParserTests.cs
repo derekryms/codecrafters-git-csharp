@@ -20,13 +20,15 @@ public class ObjectParserTests
         // Arrange
         var gitObject = CreateGitObject(typeString, expectedContent);
         var parser = new ObjectParser();
+        var expectedContentBytes = Encoding.ASCII.GetBytes(expectedContent);
 
         // Act
-        var (type, parsedContent) = parser.ParseGitObject(gitObject);
+        var result = parser.ParseGitObject(gitObject);
 
         // Assert
-        type.ShouldBe(expectedType);
-        parsedContent.ShouldBe(expectedContent);
+        result.Header.Type.ShouldBe(expectedType);
+        result.Header.Length.ShouldBe(expectedContent.Length);
+        result.Content.ShouldBe(expectedContentBytes);
     }
 
     [Fact]

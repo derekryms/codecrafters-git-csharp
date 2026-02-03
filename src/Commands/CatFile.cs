@@ -25,15 +25,16 @@ public class CatFile(
         var repo = repoFactory.CreateAtCurrentDirectory();
         var objectPath = objectLocator.GetGitObjectFilePath(repo, args[1]);
         var decompressedBytes = compressionService.GetDecompressedObject(objectPath);
-        var (type, content) = objectParser.ParseGitObject(decompressedBytes);
+        var gitObject = objectParser.ParseGitObject(decompressedBytes);
+        var blob = objectParser.ParseBlobObject(gitObject.Content);
 
         switch (args[0])
         {
             case "-p":
-                output.Write(content);
+                output.Write(blob.AsciiContent);
                 break;
             case "-t":
-                output.Write(type.ToString().ToLower());
+                output.Write(gitObject.Header.Type.ToString().ToLower());
                 break;
         }
     }

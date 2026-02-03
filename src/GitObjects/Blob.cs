@@ -1,6 +1,3 @@
 namespace codecrafters_git.GitObjects;
 
-public class Blob
-{
-    public string Content { get; set; } = "";
-}
+public record Blob(string AsciiContent);
