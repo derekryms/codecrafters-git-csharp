@@ -44,4 +44,15 @@ public class ObjectBuilder(IFileSystem fileSystem) : IObjectBuilder
 
         return entries.OrderBy(e => e.Name).SelectMany(e => e.EntryBytes).ToArray();
     }
+
+    public byte[] BuildCommitObjectContentBytes(string treeHash, string parentHash, string message)
+    {
+        var treeLine = $"tree {treeHash}\n";
+        var parentLine = $"parent {parentHash}\n";
+        var authorCommitterLine = "author Derek Ryms <dryms@arielcorp.com> 1770343328 -0500\n";
+        var messageLine = $"\n{message}\n";
+
+        var commitContent = treeLine + parentLine + authorCommitterLine + messageLine;
+        return Encoding.ASCII.GetBytes(commitContent);
+    }
 }

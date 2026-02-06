@@ -158,4 +158,24 @@ public class ObjectBuilderTests
         resultString.ShouldNotContain(gitDirName);
         resultString.ShouldContain(srcDirName);
     }
+
+    [Fact]
+    public void BuildCommitObjectContentBytes_ShouldReturnCorrectlyFormattedCommit()
+    {
+        // Arrange
+        const string treeHash = "abc123def456789012345678901234567890abcd";
+        const string parentHash = "def456789012345678901234567890abcdef1234";
+        const string message = "Initial commit";
+        var objectBuilder = new ObjectBuilder(_fileSystem);
+
+        // Act
+        var result = objectBuilder.BuildCommitObjectContentBytes(treeHash, parentHash, message);
+        var resultString = Encoding.ASCII.GetString(result);
+
+        // Assert
+        resultString.ShouldContain($"tree {treeHash}\n");
+        resultString.ShouldContain($"parent {parentHash}\n");
+        resultString.ShouldContain("author Derek Ryms <dryms@arielcorp.com>");
+        resultString.ShouldEndWith($"\n{message}\n");
+    }
 }
