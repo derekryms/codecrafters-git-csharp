@@ -5,4 +5,5 @@ namespace codecrafters_git.Abstractions;
 public interface IObjectBuilder
 {
     byte[] BuildGitObject(ObjectType type, byte[] content);
+    byte[] BuildTreeObjectContentBytes(string directory);
 }

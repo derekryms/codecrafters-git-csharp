@@ -26,9 +26,8 @@ public class ObjectParserTests
         var result = parser.ParseGitObject(gitObject);
 
         // Assert
-        result.Header.Type.ShouldBe(expectedType);
-        result.Header.Length.ShouldBe(expectedContent.Length);
-        result.Content.ShouldBe(expectedContentBytes);
+        result.Type.ShouldBe(expectedType.ToString().ToLower());
+        result.ContentBytes.ShouldBe(expectedContentBytes);
     }
 
     [Fact]
@@ -65,24 +64,6 @@ public class ObjectParserTests
         // Act & Assert
         var exception = Should.Throw<ArgumentException>(() => parser.ParseGitObject(invalidObject));
         exception.Message.ShouldContain("no space byte found");
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("Hello World!")]
-    [InlineData("Line1\nLine2\nLine3")]
-    [InlineData("Special chars: !@#$%^&*()")]
-    public void ParseBlobObject_WithValidContent_ShouldReturnBlobWithCorrectContent(string content)
-    {
-        // Arrange
-        var contentBytes = Encoding.ASCII.GetBytes(content);
-        var parser = new ObjectParser();
-
-        // Act
-        var result = parser.ParseBlobObject(contentBytes);
-
-        // Assert
-        result.AsciiContent.ShouldBe(content);
     }
 
     [Fact]

@@ -17,23 +17,14 @@ public class ObjectParser : IObjectParser
             }
 
             var headerBytes = decompressedBytes[..i];
-            var header = ParseGitObjectHeader(headerBytes);
+            var type = ParseTypeFromHeader(headerBytes);
 
             var contentBytes = decompressedBytes[(i + 1)..];
 
-            return new GitObject(header, contentBytes);
+            return new GitObject(type, contentBytes);
         }
 
         throw new ArgumentException("Invalid git object: no null byte found.");
-    }
-
-    /*
-    blob <size>\0<content>
-    */
-    public Blob ParseBlobObject(byte[] blobContentBytes)
-    {
-        var asciiContent = Encoding.ASCII.GetString(blobContentBytes);
-        return new Blob(asciiContent);
     }
 
     /*
@@ -71,7 +62,7 @@ public class ObjectParser : IObjectParser
         return new Tree(treeEntries);
     }
 
-    private static ObjectHeader ParseGitObjectHeader(byte[] headerBytes)
+    private static ObjectType ParseTypeFromHeader(byte[] headerBytes)
     {
         for (var i = 0; i < headerBytes.Length; i++)
         {
@@ -84,10 +75,10 @@ public class ObjectParser : IObjectParser
             var typeBytes = headerBytes[..i];
             var type = GetTypeFromBytes(typeBytes);
 
-            var lengthBytes = headerBytes[(i + 1)..];
-            var length = GetLengthFromBytes(lengthBytes);
+            // var lengthBytes = headerBytes[(i + 1)..];
+            // var length = GetLengthFromBytes(lengthBytes);
 
-            return new ObjectHeader(type, length);
+            return type;
         }
 
         throw new ArgumentException("Invalid git object header: no space byte found.");
@@ -106,12 +97,12 @@ public class ObjectParser : IObjectParser
         };
     }
 
-    private static int GetLengthFromBytes(byte[] lengthBytes)
-    {
-        var lengthString = Encoding.ASCII.GetString(lengthBytes);
-        var valid = int.TryParse(lengthString, out var length);
-        return !valid ? throw new ArgumentException($"Invalid length bytes: {lengthString}") : length;
-    }
+    // private static int GetLengthFromBytes(byte[] lengthBytes)
+    // {
+    //     var lengthString = Encoding.ASCII.GetString(lengthBytes);
+    //     var valid = int.TryParse(lengthString, out var length);
+    //     return !valid ? throw new ArgumentException($"Invalid length bytes: {lengthString}") : length;
+    // }
 
     private static int FindSpaceByte(byte[] treeContentBytes, int i)
     {

@@ -30,7 +30,7 @@ public class LsTree(
         var objectPath = objectLocator.GetGitObjectFilePath(repo, treeHash);
         var objectDecompressedBytes = compressionService.GetDecompressedObject(objectPath);
         var gitObject = objectParser.ParseGitObject(objectDecompressedBytes);
-        var tree = objectParser.ParseTreeObject(gitObject.Content);
+        var tree = objectParser.ParseTreeObject(gitObject.ContentBytes);
 
         if (args[0] is "--name-only")
         {

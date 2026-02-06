@@ -43,4 +43,19 @@ public class FileSystem : IFileSystem
     {
         return File.ReadAllBytes(file);
     }
+
+    public IEnumerable<string> GetFiles(string directory)
+    {
+        return Directory.GetFiles(directory);
+    }
+
+    public IEnumerable<string> GetDirectories(string directory)
+    {
+        return Directory.GetDirectories(directory);
+    }
+
+    public string GetFileName(string file)
+    {
+        return Path.GetFileName(file);
+    }
 }

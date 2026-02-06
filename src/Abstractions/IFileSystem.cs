@@ -10,4 +10,7 @@ public interface IFileSystem
     Stream OpenRead(string path);
     Stream OpenWrite(string path);
     byte[] ReadAllBytes(string file);
+    IEnumerable<string> GetFiles(string directory);
+    IEnumerable<string> GetDirectories(string directory);
+    string GetFileName(string file);
 }

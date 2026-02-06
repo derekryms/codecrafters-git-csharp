@@ -73,13 +73,11 @@ public class CatFileTests
         var objectPath = $"{_mockRepo.GitDirectory}/{objectHash[..2]}/{objectHash[2..]}";
         var decompressedBytes = Array.Empty<byte>();
         var contentDecompressedBytes = Encoding.ASCII.GetBytes(expectedOutput);
-        var gitObject = new GitObject(new ObjectHeader(ObjectType.Blob, contentDecompressedBytes.Length),
-            contentDecompressedBytes);
+        var gitObject = new GitObject(ObjectType.Blob, contentDecompressedBytes);
 
         _objectLocator.GetGitObjectFilePath(_mockRepo, objectHash).Returns(objectPath);
         _compressionService.GetDecompressedObject(objectPath).Returns(decompressedBytes);
         _objectParser.ParseGitObject(decompressedBytes).Returns(gitObject);
-        _objectParser.ParseBlobObject(gitObject.Content).Returns(new Blob(expectedOutput));
 
         // Act
         catFileCommand.Execute(args);

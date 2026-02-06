@@ -54,7 +54,7 @@ public class LsTreeTests
         const string objectPath = "test/path";
         var decompressedBytes = "test bytes"u8.ToArray();
         var contentBytes = "test content"u8.ToArray();
-        var gitObject = new GitObject(new ObjectHeader(ObjectType.Tree, contentBytes.Length), contentBytes);
+        var gitObject = new GitObject(ObjectType.Tree, contentBytes);
         var tree = new Tree([
             new TreeEntry(TreeEntryMode.RegularFile, "someHash1", "file1.txt"),
             new TreeEntry(TreeEntryMode.ExecutableFile, "someHash2", "script.sh"),
@@ -65,7 +65,7 @@ public class LsTreeTests
         _objectLocator.GetGitObjectFilePath(_mockRepo, treeHash).Returns(objectPath);
         _compressionService.GetDecompressedObject(objectPath).Returns(decompressedBytes);
         _objectParser.ParseGitObject(decompressedBytes).Returns(gitObject);
-        _objectParser.ParseTreeObject(gitObject.Content).Returns(tree);
+        _objectParser.ParseTreeObject(gitObject.ContentBytes).Returns(tree);
         var lsTreeCommand = new LsTree(_repoFactory, _objectLocator, _compressionService, _objectParser, _outputWriter);
 
         // Act
@@ -87,7 +87,7 @@ public class LsTreeTests
         const string objectPath = "test/path";
         var decompressedBytes = "test bytes"u8.ToArray();
         var contentBytes = "test content"u8.ToArray();
-        var gitObject = new GitObject(new ObjectHeader(ObjectType.Tree, contentBytes.Length), contentBytes);
+        var gitObject = new GitObject(ObjectType.Tree, contentBytes);
         var tree = new Tree([
             new TreeEntry(TreeEntryMode.RegularFile, "someHash1", "file1.txt"),
             new TreeEntry(TreeEntryMode.ExecutableFile, "someHash2", "script.sh"),
@@ -98,7 +98,7 @@ public class LsTreeTests
         _objectLocator.GetGitObjectFilePath(_mockRepo, treeHash).Returns(objectPath);
         _compressionService.GetDecompressedObject(objectPath).Returns(decompressedBytes);
         _objectParser.ParseGitObject(decompressedBytes).Returns(gitObject);
-        _objectParser.ParseTreeObject(gitObject.Content).Returns(tree);
+        _objectParser.ParseTreeObject(gitObject.ContentBytes).Returns(tree);
         var lsTreeCommand = new LsTree(_repoFactory, _objectLocator, _compressionService, _objectParser, _outputWriter);
 
         // Act
