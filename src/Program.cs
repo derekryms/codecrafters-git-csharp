@@ -35,6 +35,9 @@ static void ConfigureServices(IServiceCollection services)
     services.AddSingleton<IObjectParser, ObjectParser>();
     services.AddSingleton<IObjectBuilder, ObjectBuilder>();
     services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();
+    services.AddSingleton<IGitClient, GitHttpClient>();
+
+    services.AddHttpClient();
 
     // Command resolver
     services.AddSingleton<ICommandResolver, CommandResolver>();

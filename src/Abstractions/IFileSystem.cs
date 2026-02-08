@@ -13,4 +13,5 @@ public interface IFileSystem
     IEnumerable<string> GetFiles(string directory);
     IEnumerable<string> GetDirectories(string directory);
     string GetFileName(string file);
+    string Combine(string path1, string path2);
 }

@@ -58,4 +58,9 @@ public class FileSystem : IFileSystem
     {
         return Path.GetFileName(file);
     }
+
+    public string Combine(string path1, string path2)
+    {
+        return Path.Combine(path1, path2);
+    }
 }

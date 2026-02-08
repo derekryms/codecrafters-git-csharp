@@ -5,6 +5,7 @@ public static class Constants
     public const byte NullByte = 0;
     public const byte SpaceByte = 32;
     public const int ShaByteLength = 20;
+    public const int ShaHexStringLength = 40;
 
     // public byte[] BlobTypeBytes = "blob"u8.ToArray();
     // public byte[] TreeTypeBytes = "tree"u8.ToArray();
