@@ -20,6 +20,7 @@ public class Clone(
         }
 
         new Init(repoFactory, fileSystem, output).Execute([args[1]]);
-        var results = gitClient.DiscoverReferences(args[0]).Result;
+        var referenceDiscoverResult = gitClient.DiscoverReferences(args[0]).Result;
+        var pack = gitClient.NegotiatePack(args[0], referenceDiscoverResult.HeadHash).Result;
     }
 }

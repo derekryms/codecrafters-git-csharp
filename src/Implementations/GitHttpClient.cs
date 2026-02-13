@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using codecrafters_git.Abstractions;
 using codecrafters_git.GitObjects;
 
@@ -6,12 +7,14 @@ namespace codecrafters_git.Implementations;
 public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fileSystem) : IGitClient
 {
     private const string ReferenceDiscoveryQuery = "info/refs?service=git-upload-pack";
-    
+    private const string PackNegotiationQuery = "git-upload-pack";
+    private const string PackNegotiationHeaderContentType = "application/x-git-upload-pack-request";
+
     public async Task<ReferenceDiscoverResult> DiscoverReferences(string repoToCloneUrl)
     {
         using var httpClient = httpClientFactory.CreateClient();
         var referenceDiscoverUrl = fileSystem.Combine(repoToCloneUrl, ReferenceDiscoveryQuery);
-        var response = await httpClient.GetAsync(referenceDiscoverUrl);
+        using var response = await httpClient.GetAsync(referenceDiscoverUrl);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(
@@ -31,4 +34,41 @@ public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fil
 
         return new ReferenceDiscoverResult(headHash, references);
     }
+
+    public async Task<Pack> NegotiatePack(string repoToCloneUrl, string sha)
+    {
+        using var httpClient = httpClientFactory.CreateClient();
+        var packNegotiationUrl = fileSystem.Combine(repoToCloneUrl, PackNegotiationQuery);
+        using var packNegotiationRequest = GeneratePackNegotiationRequest(sha);
+        using var response = await httpClient.PostAsync(packNegotiationUrl, packNegotiationRequest);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to negotiate pack for {repoToCloneUrl}. Status code: {response.StatusCode}");
+        }
+
+        var result = await response.Content.ReadAsStringAsync();
+        return new Pack { Content = result };
+    }
+
+    private static StringContent GeneratePackNegotiationRequest(string sha)
+    {
+        var want = GeneratePktLine($"want {sha}\n").Line;
+        const string end = "0000";
+        var done = GeneratePktLine("done\n").Line;
+        var content = new StringContent(want + end + done);
+        content.Headers.ContentType = new MediaTypeHeaderValue(PackNegotiationHeaderContentType);
+        return content;
+    }
+
+    private static PktLine GeneratePktLine(string content)
+    {
+        return new PktLine($"{content.Length + 4:X4}{content}");
+    }
+}
+
+public record PktLine(string Line);
+
+public class Pack
+{
+    public string Content { get; set; }
 }
