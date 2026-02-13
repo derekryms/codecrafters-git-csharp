@@ -1,5 +1,6 @@
 using System.Text;
 using codecrafters_git.Abstractions;
+using codecrafters_git.GitObjects;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
@@ -63,12 +64,12 @@ public class PackParser : IPackParser
                 case PackObjectType.Tree:
                 case PackObjectType.Blob:
                 case PackObjectType.Tag:
-                    var uncompressedData = DecompressObjectData(bytes, ref pos);
+                    var uncompressedData = DecompressObjectData(bytes, size, ref pos);
                     undeltifiedPackObjects.Add(new UndeltifiedPackObject(type, uncompressedData,
                         Encoding.ASCII.GetString(uncompressedData)));
                     break;
                 case PackObjectType.RefDelta:
-                    refDeltaPackObjects.Add(ParseRefDeltaObject(type, bytes, ref pos));
+                    refDeltaPackObjects.Add(ParseRefDeltaObject(bytes, size, ref pos));
                     break;
                 // Not implementing ofs delta for now
                 case PackObjectType.OfsDelta:
@@ -80,7 +81,7 @@ public class PackParser : IPackParser
         return new Pack(undeltifiedPackObjects, refDeltaPackObjects);
     }
 
-    private static byte[] DecompressObjectData(byte[] bytes, ref int pos)
+    private static byte[] DecompressObjectData(byte[] bytes, int size, ref int pos)
     {
         // Undeltified object data is the compressed zlib data
         // The size in the object header is that of the uncompressed data
@@ -93,18 +94,24 @@ public class PackParser : IPackParser
 
         inflaterStream.CopyTo(decompressedStream);
 
+        if (decompressedStream.Length != size)
+        {
+            throw new InvalidDataException(
+                $"Decompressed data size {decompressedStream.Length} does not match expected size {size}.");
+        }
+
         // This is the actual number of compressed bytes read
         pos += (int)inflater.TotalIn;
 
         return decompressedStream.ToArray();
     }
 
-    private static RefDeltaPackObject ParseRefDeltaObject(PackObjectType type, byte[] bytes, ref int pos)
+    private static RefDeltaPackObject ParseRefDeltaObject(byte[] bytes, int size, ref int pos)
     {
         var sha = Convert.ToHexStringLower(bytes[pos..(pos + Constants.ShaByteLength)]);
         pos += Constants.ShaByteLength;
 
-        var objectData = DecompressObjectData(bytes, ref pos);
+        var objectData = DecompressObjectData(bytes, size, ref pos);
 
         var deltaPos = 0;
         var sourceSize = ParseRefDeltaSize(objectData, ref deltaPos);
@@ -218,4 +225,20 @@ public enum PackObjectType
     Tag = 4,
     OfsDelta = 6,
     RefDelta = 7
+}
+
+public static class PackObjectTypeExtensions
+{
+    public static ObjectType ToObjectType(this PackObjectType packObjectType)
+    {
+        return packObjectType switch
+        {
+            PackObjectType.Commit => ObjectType.Commit,
+            PackObjectType.Tree => ObjectType.Tree,
+            PackObjectType.Blob => ObjectType.Blob,
+            PackObjectType.Tag => ObjectType.Tag,
+            _ => throw new ArgumentOutOfRangeException(nameof(packObjectType),
+                $"Not a valid pack object type: {packObjectType}")
+        };
+    }
 }

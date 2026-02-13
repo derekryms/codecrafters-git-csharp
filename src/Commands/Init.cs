@@ -1,4 +1,5 @@
 using codecrafters_git.Abstractions;
+using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Commands;
 
@@ -14,6 +15,22 @@ public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem, IOutpu
                 return;
         }
 
+        _ = InitializeRepository(args);
+    }
+
+    public Repository ExecuteWithResult(string[] args)
+    {
+        switch (args.Length)
+        {
+            case > 1:
+                throw new ArgumentException("Usage: init [directory]");
+        }
+
+        return InitializeRepository(args);
+    }
+
+    private Repository InitializeRepository(string[] args)
+    {
         var repo = args.Length > 0
             ? repoFactory.CreateAtSpecificDirectory(args[0])
             : repoFactory.CreateAtCurrentDirectory();
@@ -23,5 +40,7 @@ public class Init(IRepositoryFactory repoFactory, IFileSystem fileSystem, IOutpu
         fileSystem.CreateDirectory(repo.RefsDirectory);
         fileSystem.WriteAllText(repo.HeadFile, "ref: refs/heads/main\n");
         output.WriteLine($"Initialized empty Git repository in {repo.GitDirectory}/");
+
+        return repo;
     }
 }
