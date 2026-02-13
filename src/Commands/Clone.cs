@@ -19,6 +19,7 @@ public class Clone(
                 return;
         }
 
+        // new srcOg.Commands.Clone().Run(args).Wait();
         new Init(repoFactory, fileSystem, output).Execute([args[1]]);
         var referenceDiscoverResult = gitClient.DiscoverReferences(args[0]).Result;
         var pack = gitClient.NegotiatePack(args[0], referenceDiscoverResult.HeadHash).Result;

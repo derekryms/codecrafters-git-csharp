@@ -4,7 +4,8 @@ using codecrafters_git.GitObjects;
 
 namespace codecrafters_git.Implementations;
 
-public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fileSystem) : IGitClient
+public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fileSystem, IPackParser packParser)
+    : IGitClient
 {
     private const string ReferenceDiscoveryQuery = "info/refs?service=git-upload-pack";
     private const string PackNegotiationQuery = "git-upload-pack";
@@ -46,8 +47,10 @@ public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fil
             throw new Exception($"Failed to negotiate pack for {repoToCloneUrl}. Status code: {response.StatusCode}");
         }
 
-        var result = await response.Content.ReadAsStringAsync();
-        return new Pack { Content = result };
+        var result = await response.Content.ReadAsByteArrayAsync();
+        var pack = packParser.ParsePackBytes(result);
+
+        return pack;
     }
 
     private static StringContent GeneratePackNegotiationRequest(string sha)
@@ -68,7 +71,4 @@ public class GitHttpClient(IHttpClientFactory httpClientFactory, IFileSystem fil
 
 public record PktLine(string Line);
 
-public class Pack
-{
-    public string Content { get; set; }
-}
+public record Pack(List<UndeltifiedPackObject> UndeltifiedPackObjects, List<RefDeltaPackObject> RefDeltaPackObjects);
