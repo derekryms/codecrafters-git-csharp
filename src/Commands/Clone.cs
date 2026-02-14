@@ -82,5 +82,47 @@ public class Clone(
             var objectPath = objectLocator.CreateGitObjectDirectory(repo, hash);
             compressionService.SaveCompressedObject(objectPath, objectBytes);
         }
+
+        var headHashType = typeToHashDict[referenceDiscoverResult.HeadHash];
+        if (headHashType is not ObjectType.Commit)
+        {
+            throw new Exception($"Expected head hash to be a commit object, but got {headHashType}");
+        }
+
+        var commitObject = objectLocator.GetGitObjectFilePath(repo, referenceDiscoverResult.HeadHash);
+        var commitBytes = compressionService.GetDecompressedObject(commitObject);
+        var commit = objectParser.ParseGitObject(commitBytes);
+
+        var treeHash = commit.AsciiContent.Split(' ')[1].Split("\n")[0];
+        var treeObject = objectLocator.GetGitObjectFilePath(repo, treeHash);
+        var treeBytes = compressionService.GetDecompressedObject(treeObject);
+        var gitTreeObject = objectParser.ParseGitObject(treeBytes);
+        var tree = objectParser.ParseTreeObject(gitTreeObject.ContentBytes);
+        CheckoutTree(repo, tree, repo.RepoDirectory);
+    }
+
+    private void CheckoutTree(Repository repo, Tree tree, string directory)
+    {
+        foreach (var treeEntry in tree.TreeEntries)
+        {
+            if (treeEntry.Mode == TreeEntryMode.Directory)
+            {
+                var subDirectory = fileSystem.Combine(directory, treeEntry.Name);
+                fileSystem.CreateDirectory(subDirectory);
+                var objectPath = objectLocator.GetGitObjectFilePath(repo, treeEntry.Hash);
+                var decompressedBytes = compressionService.GetDecompressedObject(objectPath);
+                var gitObject = objectParser.ParseGitObject(decompressedBytes);
+                var subTree = objectParser.ParseTreeObject(gitObject.ContentBytes);
+                CheckoutTree(repo, subTree, subDirectory);
+            }
+            else
+            {
+                var objectPath = objectLocator.GetGitObjectFilePath(repo, treeEntry.Hash);
+                var decompressedBytes = compressionService.GetDecompressedObject(objectPath);
+                var gitObject = objectParser.ParseGitObject(decompressedBytes);
+                var filePath = fileSystem.Combine(directory, treeEntry.Name);
+                fileSystem.WriteAllText(filePath, gitObject.AsciiContent);
+            }
+        }
     }
 }
